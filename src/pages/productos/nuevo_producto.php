@@ -1,6 +1,7 @@
 <?php
-include '../includes/auth.php';
-include '../includes/conexion.php';
+
+include __DIR__ . '/../../includes/auth.php';
+include __DIR__ . '/../../includes/conexion.php';
 verificarAutenticacion();
 
 // Obtener marcas
@@ -39,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-include '../includes/header.php';
+include __DIR__ . '/../../includes/header.php';
 ?>
 
 <!-- Select2 CSS -->
@@ -177,4 +178,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<?php include '../includes/footer.php'; ?>
+<?php include __DIR__ . '/../../includes/footer.php'; ?>

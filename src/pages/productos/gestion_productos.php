@@ -1,6 +1,8 @@
 <?php
-include '../includes/auth.php';
-include '../includes/conexion.php';
+require_once __DIR__ . '/../../includes/config.php';
+
+include __DIR__ . '/../../includes/auth.php';
+include __DIR__ . '/../../includes/conexion.php';
 verificarAutenticacion();
 
 // Obtener proveedores para el modal y filtro
@@ -78,7 +80,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-include '../includes/header.php';
+include __DIR__ . '/../../includes/header.php';
 ?>
 
 <div class="container-xl px-4">
@@ -359,5 +361,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <?php
-include '../includes/footer.php';
+include __DIR__ . '/../../includes/footer.php';
 ?>

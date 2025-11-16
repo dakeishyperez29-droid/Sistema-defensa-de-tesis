@@ -1,7 +1,8 @@
 <?php
-include '../includes/auth.php';
-include '../includes/conexion.php';
-require 'api_proveedor.php';
+require_once __DIR__ . '/../../includes/config.php';
+include __DIR__ . '/../../includes/auth.php';
+include __DIR__ . '/../../includes/conexion.php';
+require __DIR__ . '/api_proveedor.php';
 verificarAutenticacion();
 
 // Obtener proveedores con API configurada
@@ -58,6 +59,6 @@ foreach ($proveedores as $proveedor) {
     }
 }
 
-header("Location: gestion_proveedores.php");
+header("Location: " . PAGES_URL . "/proveedores/gestion_proveedores.php");
 exit();
 ?>

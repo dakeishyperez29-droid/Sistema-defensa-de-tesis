@@ -1,6 +1,6 @@
 <?php
-include '../includes/auth.php';
-include '../includes/conexion.php';
+include __DIR__ . '/../../includes/auth.php';
+include __DIR__ . '/../../includes/conexion.php';
 verificarAutenticacion();
 
 // Obtener parámetros de filtro
@@ -111,7 +111,7 @@ switch ($reporteSeleccionado) {
 
 }
 
-include '../includes/header.php';
+include __DIR__ . '/../../includes/header.php';
 ?>
 
 <div class="container-fluid py-4">
@@ -502,4 +502,4 @@ window.onafterprint = function() {
 };
 </script>
 
-<?php include '../includes/footer.php'; ?>
+<?php include __DIR__ . '/../../includes/footer.php'; ?>

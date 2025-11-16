@@ -1,9 +1,12 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/src/includes/config.php';
 
 // Si ya está autenticado, redirigir al dashboard
 if (isset($_SESSION['usuario_id'])) {
-    header("Location: /src/pages/index.php");
+    header("Location: " . PAGES_URL . "/index.php");
     exit();
 }
 

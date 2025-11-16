@@ -1,6 +1,7 @@
 <?php
-include '../includes/auth.php';
-include '../includes/conexion.php';
+require_once __DIR__ . '/../../includes/config.php';
+include __DIR__ . '/../../includes/auth.php';
+include __DIR__ . '/../../includes/conexion.php';
 verificarAutenticacion();
 
 // Consulta productos con bajo stock
@@ -12,7 +13,7 @@ $productosBajoStock = $pdo->query("
     ORDER BY p.stock ASC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-include '../includes/header.php';
+include __DIR__ . '/../../includes/header.php';
 ?>
 
 <div class="container py-4">
@@ -28,7 +29,7 @@ include '../includes/header.php';
     <div class="card shadow-sm">
         <div class="card-body p-0">
             <?php if (count($productosBajoStock) > 0): ?>
-            <form id="formReposicion" method="GET" action="../compras/registrar_compra.php">
+            <form id="formReposicion" method="GET" action="<?= PAGES_URL ?>/compras/registrar_compra.php">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
@@ -105,9 +106,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         // Agrega proveedor_id al action
-        this.action = '../compras/registrar_compra.php?proveedor_id=' + proveedorSeleccionado + '&' + new URLSearchParams(new FormData(this)).toString();
+        this.action = '<?= PAGES_URL ?>/compras/registrar_compra.php?proveedor_id=' + proveedorSeleccionado + '&' + new URLSearchParams(new FormData(this)).toString();
     });
 });
 </script>
 
-<?php include '../includes/footer.php'; ?>
+<?php include __DIR__ . '/../../includes/footer.php'; ?>

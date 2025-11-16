@@ -1,12 +1,13 @@
 <?php
-include '../includes/auth.php';
-include '../includes/conexion.php';
+
+include __DIR__ . '/../../includes/auth.php';
+include __DIR__ . '/../../includes/conexion.php';
 verificarAutenticacion();
 
 // Obtener todos los clientes
 $clientes = $pdo->query("SELECT id, nombre, identificacion, direccion, creado_en FROM clientes ORDER BY creado_en DESC")->fetchAll(PDO::FETCH_ASSOC);
 
-include '../includes/header.php';
+include __DIR__ . '/../../includes/header.php';
 ?>
 
 <div class="container-xl px-4">
@@ -166,4 +167,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<?php include '../includes/footer.php'; ?>
+<?php include __DIR__ . '/../../includes/footer.php'; ?>

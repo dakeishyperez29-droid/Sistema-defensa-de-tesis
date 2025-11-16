@@ -1,5 +1,5 @@
 <?php
-include '../includes/conexion.php';
+include __DIR__ . '/../../includes/conexion.php';
 
 $marca_id = $_GET['marca_id'] ?? '';
 if (!$marca_id) {

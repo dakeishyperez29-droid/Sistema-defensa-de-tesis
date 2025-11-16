@@ -1,4 +1,9 @@
 <!-- Modal para Método de Pago -->
+<?php
+if (!defined('BASE_URL')) {
+    require_once __DIR__ . '/../../includes/config.php';
+}
+?>
 <div class="modal fade" id="modalMetodoPago" tabindex="-1" aria-labelledby="modalMetodoPagoLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

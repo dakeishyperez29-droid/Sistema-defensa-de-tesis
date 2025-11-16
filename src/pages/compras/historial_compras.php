@@ -1,6 +1,8 @@
 <?php
-include '../includes/auth.php';
-include '../includes/conexion.php';
+require_once __DIR__ . '/../../includes/config.php';
+
+include __DIR__ . '/../../includes/auth.php';
+include __DIR__ . '/../../includes/conexion.php';
 verificarAutenticacion();
 
 // Definir columnas permitidas para ordenar
@@ -55,7 +57,7 @@ $totalPages = ceil($total / $limit);
 
 // Consulta con orden dinámico, filtros y paginación
 $sql = "
-    SELECT c.id, c.fecha, COALESCE(GROUP_CONCAT(DISTINCT m.nombre SEPARATOR ', '), 'Sin marca') AS marca, c.total, COALESCE(f.numero_factura, 'Sin factura') AS numero_factura
+    SELECT c.id, c.fecha, COALESCE(GROUP_CONCAT(DISTINCT m.nombre SEPARATOR ', '), 'Sin marca') AS marca, c.total, COALESCE(MAX(f.numero_factura), 'Sin factura') AS numero_factura
     FROM compras c
     LEFT JOIN detalles_compra dc ON dc.compra_id = c.id
     LEFT JOIN marcas m ON dc.marca_id = m.id
@@ -70,7 +72,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $compras = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-include '../includes/header.php';
+include __DIR__ . '/../../includes/header.php';
 ?>
 
 <div class="container">
@@ -126,7 +128,7 @@ include '../includes/header.php';
                         <button type="submit" class="btn btn-primary me-2">
                             <i class="bi bi-search me-1"></i>Buscar
                         </button>
-                        <a href="historial_compras.php" class="btn btn-outline-secondary">
+                        <a href="<?= PAGES_URL ?>/compras/historial_compras.php" class="btn btn-outline-secondary">
                             <i class="bi bi-x-circle me-1"></i>Limpiar Filtros
                         </a>
                     </div>
@@ -174,7 +176,7 @@ include '../includes/header.php';
                             <td><?= htmlspecialchars($compra['numero_factura']) ?></td>
                             <td>$<?= number_format($compra['total'], 2, ',', '.') ?></td>
                             <td class="text-center">
-                                <a href="detalle_compra.php?id=<?= $compra['id'] ?>" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Ver Detalle">
+                                <a href="<?= PAGES_URL ?>/compras/detalle_compra.php?id=<?= $compra['id'] ?>" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Ver Detalle">
                                     <i class="bi bi-eye"></i> Ver Detalle
                                 </a>
                             </td>
@@ -247,4 +249,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<?php include '../includes/footer.php'; ?>
+<?php include __DIR__ . '/../../includes/footer.php'; ?>

@@ -1,6 +1,7 @@
 <?php
-include '../includes/auth.php';
-include '../includes/conexion.php';
+require_once __DIR__ . '/../../includes/config.php';
+include __DIR__ . '/../../includes/auth.php';
+include __DIR__ . '/../../includes/conexion.php';
 verificarAutenticacion();
 
 $error = '';
@@ -14,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $stmt = $pdo->prepare("INSERT INTO tasa_diaria (fecha, tasa, descripcion) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE tasa = ?, descripcion = ?");
         $stmt->execute([$fecha, $tasa, $descripcion, $tasa, $descripcion]);
-        header("Location: gestion_tasa.php?success=1");
+        header("Location: " . PAGES_URL . "/tasa/gestion_tasa.php?success=1");
         exit();
     } catch (Exception $e) {
         $error = 'Error al guardar la tasa: ' . $e->getMessage();
@@ -27,7 +28,7 @@ $tasa_actual = $pdo->query("SELECT * FROM tasa_diaria WHERE fecha = CURDATE()")-
 // Obtener últimas tasas
 $ultimas_tasas = $pdo->query("SELECT * FROM tasa_diaria ORDER BY fecha DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
 
-include '../includes/header.php';
+include __DIR__ . '/../../includes/header.php';
 ?>
 
 <div class="container">
@@ -35,7 +36,7 @@ include '../includes/header.php';
         <h2 class="fw-bold text-primary mb-0">
             <i class="bi bi-cash me-2"></i>Gestión de Tasa Diaria
         </h2>
-        <a href="../index.php" class="btn btn-outline-secondary">
+        <a href="<?= PAGES_URL ?>/index.php" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left"></i> Volver
         </a>
     </div>
@@ -124,4 +125,4 @@ include '../includes/header.php';
     </div>
 </div>
 
-<?php include '../includes/footer.php'; ?>
+<?php include __DIR__ . '/../../includes/footer.php'; ?>

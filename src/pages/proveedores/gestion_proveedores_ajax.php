@@ -1,5 +1,6 @@
 <?php
-include '../includes/conexion.php';
+
+include __DIR__ . '/../../includes/conexion.php';
 
 // Editar proveedor
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id']) && !isset($_POST['eliminar'])) {

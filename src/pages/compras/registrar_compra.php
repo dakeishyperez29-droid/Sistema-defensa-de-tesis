@@ -1,6 +1,7 @@
 <?php
-include '../includes/auth.php';
-include '../includes/conexion.php';
+require_once __DIR__ . '/../../includes/config.php';
+include __DIR__ . '/../../includes/auth.php';
+include __DIR__ . '/../../includes/conexion.php';
 verificarAutenticacion();
 
 $cliente_id = $_GET['cliente_id'] ?? $_POST['cliente_id'] ?? null;
@@ -89,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $pdo->commit();
-        header("Location: registrar_compra.php?success=1");
+        header("Location: " . PAGES_URL . "/compras/registrar_compra.php?success=1");
         exit();
 
     } catch (Exception $e) {
@@ -136,14 +137,14 @@ $tasa_info = $pdo->query("SELECT tasa, fecha FROM tasa_diaria ORDER BY fecha DES
 $tasa_actual = $tasa_info['tasa'] ?? null;
 $fecha_tasa = $tasa_info['fecha'] ?? null;
 
-include '../includes/header.php';
+include __DIR__ . '/../../includes/header.php';
 ?>
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold text-primary mb-0">
             <i class="bi bi-cart-plus me-2"></i>Registrar Nueva Compra
         </h2>
-        <a href="historial_compras.php" class="btn btn-outline-secondary">
+        <a href="<?= PAGES_URL ?>/compras/historial_compras.php" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left"></i> Volver
         </a>
     </div>
@@ -651,4 +652,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <?php include 'modal_metodopago.php'; ?>
 
-<?php include '../includes/footer.php'; ?>
+<?php include __DIR__ . '/../../includes/footer.php'; ?>

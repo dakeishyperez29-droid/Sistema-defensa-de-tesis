@@ -1,6 +1,5 @@
 <?php
-// logout.php
-session_start();
+require_once __DIR__ . '/../../includes/config.php';
 
 // Destruir todas las variables de sesión
 $_SESSION = array();
@@ -28,7 +27,7 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
 // Redireccionar a login con headers que impiden retroceso
-header("Location: login.php");
+header("Location: " . BASE_URL . "/");
 header("Expires: Thu, 19 Nov 1981 08:52:00 GMT");
 header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 

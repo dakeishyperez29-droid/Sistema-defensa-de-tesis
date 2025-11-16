@@ -1,5 +1,4 @@
 <?php
-session_start();
 require __DIR__ . '/../includes/auth.php';
 require __DIR__ . '/../includes/conexion.php';
 verificarAutenticacion();
@@ -81,7 +80,7 @@ include __DIR__ . '/../includes/header.php';
     <!-- Tarjetas de estadísticas -->
     <div class="row mb-4">
         <div class="col-md-3 mb-4">
-            <a href="/src/pages/compras/historial_compras.php" class="text-decoration-none">
+            <a href="<?= PAGES_URL ?>/compras/historial_compras.php" class="text-decoration-none">
                 <div class="stat-card card text-center h-100">
                     <div class="card-body py-4">
                         <div class="stat-card-icon"><i class="fas fa-cart-check"></i></div>
@@ -93,7 +92,7 @@ include __DIR__ . '/../includes/header.php';
         </div>
         
         <div class="col-md-3 mb-4">
-            <a href="/src/pages/productos/gestion_productos.php" class="text-decoration-none">
+            <a href="<?= PAGES_URL ?>/productos/gestion_productos.php" class="text-decoration-none">
                 <div class="stat-card card text-center h-100">
                     <div class="card-body py-4">
                         <div class="stat-card-icon"><i class="fas fa-box"></i></div>
@@ -105,7 +104,7 @@ include __DIR__ . '/../includes/header.php';
         </div>
         
         <div class="col-md-3 mb-4">
-            <a href="/src/pages/productos/bajo_stock.php" class="text-decoration-none">
+            <a href="<?= PAGES_URL ?>/productos/bajo_stock.php" class="text-decoration-none">
                 <div class="stat-card card text-center h-100">
                     <div class="card-body py-4">
                         <div class="stat-card-icon"><i class="fas fa-exclamation-triangle text-warning"></i></div>
@@ -117,7 +116,7 @@ include __DIR__ . '/../includes/header.php';
         </div>
         
         <div class="col-md-3 mb-4">
-            <a href="/src/pages/clientes/gestion_clientes.php" class="text-decoration-none">
+            <a href="<?= PAGES_URL ?>/clientes/gestion_clientes.php" class="text-decoration-none">
                 <div class="stat-card card text-center h-100">
                     <div class="card-body py-4">
                         <div class="stat-card-icon"><i class="fas fa-users"></i></div>
@@ -179,7 +178,7 @@ include __DIR__ . '/../includes/header.php';
                             </tbody>
                         </table>
                     </div>
-                    <a href="/src/pages/compras/historial_compras.php" class="btn btn-link d-block text-center py-3 text-decoration-none">
+                    <a href="<?= PAGES_URL ?>/compras/historial_compras.php" class="btn btn-link d-block text-center py-3 text-decoration-none">
                         Ver todo el historial <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                 </div>
@@ -211,7 +210,7 @@ include __DIR__ . '/../includes/header.php';
                             </tbody>
                         </table>
                     </div>
-                    <a href="/src/pages/productos/bajo_stock.php" class="btn btn-link d-block text-center py-3 text-decoration-none">
+                    <a href="<?= PAGES_URL ?>/productos/bajo_stock.php" class="btn btn-link d-block text-center py-3 text-decoration-none">
                         Gestionar productos <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                     <?php else: ?>

@@ -1,5 +1,5 @@
 <?php
-include 'includes/conexion.php';
+include __DIR__ . '/includes/conexion.php';
 
 try {
     // Cambiar el nombre de la columna proveedor_id a marca_id

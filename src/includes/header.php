@@ -1,4 +1,7 @@
 <?php
+if (!defined('BASE_URL')) {
+    require_once __DIR__ . '/config.php';
+}
 $productosBajoStockHeader = $pdo->query("
     SELECT COUNT(*) as total 
     FROM productos
@@ -14,7 +17,7 @@ $productosBajoStockHeader = $pdo->query("
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="<?= ASSETS_URL ?>/css/main.css">
 </head>
 <body class="d-flex flex-column min-vh-100">
     <!-- Barra superior con usuario -->
@@ -29,9 +32,9 @@ $productosBajoStockHeader = $pdo->query("
             <?php endif; ?>
         </div>
         <div class="flex-grow-1 d-flex justify-content-center">
-            <img src="/assets/images/logo1.png" alt="X Sales" style="height:50px;">
+            <img src="<?= ASSETS_URL ?>/images/logo1.png" alt="X Sales" style="height:50px;">
         </div>
-        <a href="/src/pages/auth/logout.php" class="btn-logout text-decoration-none">
+        <a href="<?= PAGES_URL ?>/auth/logout.php" class="btn-logout text-decoration-none">
             <i class="bi bi-box-arrow-right me-1"></i>Cerrar sesión
         </a>
     </div>
@@ -40,7 +43,7 @@ $productosBajoStockHeader = $pdo->query("
     <header class="border-bottom">
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
             <div class="container">
-                <a class="navbar-brand fw-bold text-primary" href="/src/pages/index.php">
+                <a class="navbar-brand fw-bold text-primary" href="<?= PAGES_URL ?>/index.php">
                     <i class="bi bi-box-seam me-2"></i>Sistema Compras
                 </a>
                 
@@ -51,22 +54,22 @@ $productosBajoStockHeader = $pdo->query("
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" href="/src/pages/index.php">
+                            <a class="nav-link" href="<?= PAGES_URL ?>/index.php">
                                 <i class="bi bi-house-door me-1"></i>Inicio
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/src/pages/compras/registrar_compra.php">
+                            <a class="nav-link" href="<?= PAGES_URL ?>/compras/registrar_compra.php">
                                 <i class="bi bi-cart-plus me-1"></i>Nueva Compra
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/src/pages/compras/historial_compras.php">
+                            <a class="nav-link" href="<?= PAGES_URL ?>/compras/historial_compras.php">
                                 <i class="bi bi-clock-history me-1"></i>Historial
                             </a>
                         </li>
                         <li class="nav-item position-relative">
-                            <a class="nav-link" href="/src/pages/productos/gestion_productos.php">
+                            <a class="nav-link" href="<?= PAGES_URL ?>/productos/gestion_productos.php">
                                 <i class="bi bi-box-seam me-1"></i>Productos
                                 <?php if ($productosBajoStockHeader['total'] > 0): ?>
                                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -76,17 +79,17 @@ $productosBajoStockHeader = $pdo->query("
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/src/pages/clientes/gestion_clientes.php">
+                            <a class="nav-link" href="<?= PAGES_URL ?>/clientes/gestion_clientes.php">
                                 <i class="bi bi-person me-1"></i>Clientes
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/src/pages/reportes/reporte_ventas.php">
+                            <a class="nav-link" href="<?= PAGES_URL ?>/reportes/reporte_ventas.php">
                                 <i class="bi bi-graph-up me-1"></i>Reportes
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/src/pages/tasa/gestion_tasa.php">
+                            <a class="nav-link" href="<?= PAGES_URL ?>/tasa/gestion_tasa.php">
                                 <i class="bi bi-cash me-1"></i>Tasa Diaria
                             </a>
                         </li>

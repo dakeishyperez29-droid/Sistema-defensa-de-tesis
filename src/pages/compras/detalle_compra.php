@@ -1,10 +1,11 @@
 <?php
-include '../includes/auth.php';
-include '../includes/conexion.php';
+require_once __DIR__ . '/../../includes/config.php';
+include __DIR__ . '/../../includes/auth.php';
+include __DIR__ . '/../../includes/conexion.php';
 verificarAutenticacion();
 
 if (!isset($_GET['id'])) {
-    header("Location: historial_compras.php");
+    header("Location: " . PAGES_URL . "/compras/historial_compras.php");
     exit();
 }
 
@@ -24,7 +25,7 @@ $stmt->execute([$compra_id]);
 $compra = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$compra) {
-    header("Location: historial_compras.php");
+    header("Location: " . PAGES_URL . "/compras/historial_compras.php");
     exit();
 }
 
@@ -47,7 +48,7 @@ $metodo_pago = $pdo->prepare("
 $metodo_pago->execute([$compra_id]);
 $metodo_pago = $metodo_pago->fetch(PDO::FETCH_ASSOC);
 
-include '../includes/header.php';
+include __DIR__ . '/../../includes/header.php';
 ?>
 
 <div class="container">
@@ -109,4 +110,4 @@ include '../includes/header.php';
     </div>
 </div>
 
-<?php include '../includes/footer.php'; ?>
+<?php include __DIR__ . '/../../includes/footer.php'; ?>

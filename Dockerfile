@@ -21,8 +21,12 @@ COPY . /var/www/html/
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
+# Configurar ServerName para evitar el warning
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
 # Configurar Apache para servir desde la raíz
 RUN echo '<VirtualHost *:80>\n\
+    ServerName localhost\n\
     DocumentRoot /var/www/html\n\
     <Directory /var/www/html>\n\
         Options Indexes FollowSymLinks\n\
@@ -35,17 +39,20 @@ RUN echo '<VirtualHost *:80>\n\
 
 # Script de inicio que configura el puerto dinámicamente para Railway
 # Railway asigna un puerto dinámico en la variable PORT
+# IMPORTANTE: Railway mapea automáticamente su puerto externo al puerto 80 del contenedor
+# Por lo tanto, el contenedor siempre debe escuchar en el puerto 80
 RUN echo '#!/bin/bash\n\
 set -e\n\
-# Railway asigna un puerto dinámico en la variable PORT\n\
-# Necesitamos configurar Apache para usar ese puerto si está disponible\n\
-if [ -n "$PORT" ] && [ "$PORT" != "80" ]; then\n\
-    echo "Configurando Apache para usar puerto $PORT"\n\
-    sed -i "s/Listen 80/Listen $PORT/g" /etc/apache2/ports.conf\n\
-    sed -i "s/*:80/*:$PORT/g" /etc/apache2/sites-available/000-default.conf\n\
+echo "=== Iniciando Apache ==="\n\
+echo "PORT variable: ${PORT:-not set}"\n\
+echo "Apache escuchará en puerto 80 (Railway mapeará su puerto externo a este)"\n\
+# Verificar que healthcheck.php existe\n\
+if [ -f /var/www/html/healthcheck.php ]; then\n\
+    echo "✓ healthcheck.php encontrado"\n\
 else\n\
-    echo "Usando puerto por defecto 80"\n\
+    echo "✗ ERROR: healthcheck.php no encontrado"\n\
 fi\n\
+# Iniciar Apache\n\
 exec apache2-foreground' > /usr/local/bin/start-apache.sh && \
     chmod +x /usr/local/bin/start-apache.sh
 

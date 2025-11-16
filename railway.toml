@@ -6,7 +6,8 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "apache2-foreground"
+# NO especificar startCommand aquí - usar el CMD del Dockerfile
+# startCommand = "apache2-foreground"  # Comentado para usar el script del Dockerfile
 healthcheckPath = "/healthcheck.php"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"

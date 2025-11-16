@@ -1,0 +1,11 @@
+.git
+.gitignore
+README.md
+.env
+.env.local
+node_modules
+*.log
+.DS_Store
+composer.lock
+vendor
+

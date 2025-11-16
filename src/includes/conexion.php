@@ -15,9 +15,23 @@ if (empty(getenv('DB_HOST'))) {
 }
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // Timeout de conexión más corto para evitar que el healthcheck se cuelgue
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_TIMEOUT => 3, // Timeout de 3 segundos
+        PDO::ATTR_PERSISTENT => false
+    ]);
 } catch (PDOException $e) {
-    die("Error de conexión: " . $e->getMessage());
+    // En producción, no mostrar el error completo por seguridad
+    // En desarrollo local, mostrar el error para facilitar debugging
+    $isProduction = getenv('PHP_ENV') === 'production' || getenv('RAILWAY_ENVIRONMENT') !== false;
+    
+    if ($isProduction) {
+        error_log("Error de conexión a BD: " . $e->getMessage());
+        throw new Exception("Error de conexión a la base de datos");
+    } else {
+        // En desarrollo local, mostrar el error
+        die("Error de conexión: " . $e->getMessage());
+    }
 }
 ?>

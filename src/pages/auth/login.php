@@ -1,30 +1,46 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 require_once __DIR__ . '/../../includes/config.php';
-include __DIR__ . '/../../includes/conexion.php';
 
 $error = null;
+$pdo = null;
+
+// Solo incluir conexión si no estamos en el healthcheck
+if (basename($_SERVER['PHP_SELF']) !== 'healthcheck.php') {
+    try {
+        include __DIR__ . '/../../includes/conexion.php';
+    } catch (Exception $e) {
+        // Si no hay conexión, mostrar error pero no morir
+        $error = "Error de conexión a la base de datos. Por favor, verifica la configuración.";
+    }
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    
-    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE username = ?");
-    $stmt->execute([$username]);
-    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    if ($usuario) {
-        if (password_verify($password, $usuario['password'])) {
-            $_SESSION['usuario_id'] = $usuario['id'];
-            $_SESSION['usuario_nombre'] = $usuario['nombre'];
-            $_SESSION['usuario_rol'] = $usuario['rol'];
-            header("Location: " . PAGES_URL . "/index.php");
-            exit();
-        } else {
-            $error = "Contraseña incorrecta";
-        }
+    if (!$pdo) {
+        $error = "Error de conexión a la base de datos. Por favor, verifica la configuración.";
     } else {
-        $error = "Usuario no encontrado";
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        
+        $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE username = ?");
+        $stmt->execute([$username]);
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($usuario) {
+            if (password_verify($password, $usuario['password'])) {
+                $_SESSION['usuario_id'] = $usuario['id'];
+                $_SESSION['usuario_nombre'] = $usuario['nombre'];
+                $_SESSION['usuario_rol'] = $usuario['rol'];
+                header("Location: " . PAGES_URL . "/index.php");
+                exit();
+            } else {
+                $error = "Contraseña incorrecta";
+            }
+        } else {
+            $error = "Usuario no encontrado";
+        }
     }
 }
 ?>

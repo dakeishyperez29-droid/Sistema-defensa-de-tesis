@@ -1,6 +1,8 @@
 # 🚂 Configuración para Railway
 
-## Problema: Railway usa Nixpacks en lugar de Docker
+## Problemas Comunes y Soluciones
+
+### Problema 1: Railway usa Nixpacks en lugar de Docker
 
 Si Railway está intentando usar Nixpacks (Railpack) en lugar de Docker, sigue estos pasos:
 
@@ -89,6 +91,27 @@ Si Railway está detectando la carpeta `comprar_zapatos`:
    ```
 4. Haz commit y push de los cambios
 
+### Problema 2: Healthcheck Failed / Service Unavailable
+
+Si ves el error "Healthcheck failed" o "Service unavailable":
+
+**Causa**: El healthcheck está intentando acceder a `/` que requiere conexión a la base de datos, y si la BD no está disponible, la aplicación no responde.
+
+**Solución**:
+1. El proyecto ahora incluye `healthcheck.php` que no requiere base de datos
+2. Los archivos `railway.json` y `railway.toml` están configurados para usar `/healthcheck.php`
+3. Verifica que el archivo `healthcheck.php` esté en la raíz del proyecto
+4. Si el problema persiste:
+   - Ve a Settings → Deploy
+   - Cambia el `healthcheckPath` a `/healthcheck.php`
+   - Aumenta el `healthcheckTimeout` a 300 segundos
+
+**Verificar el healthcheck localmente**:
+```bash
+curl http://localhost:8082/healthcheck.php
+# Debería responder: {"status":"ok","service":"sistema-compras","timestamp":"..."}
+```
+
 ## Verificación
 
 Después de configurar:
@@ -96,6 +119,7 @@ Después de configurar:
 1. Railway debería mostrar en los logs: "Building Docker image..."
 2. No debería mostrar: "Railpack could not determine..."
 3. El servicio debería construirse correctamente
+4. El healthcheck debería pasar usando `/healthcheck.php`
 
 ## Archivos de Configuración
 

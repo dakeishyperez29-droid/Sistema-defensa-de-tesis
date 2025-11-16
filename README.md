@@ -329,16 +329,19 @@ Railway soporta MySQL nativamente y es más fácil de configurar:
 **⚠️ IMPORTANTE**: Railway debe usar Docker, no Nixpacks. Si ves el error "Railpack could not determine...", sigue estos pasos:
 
 1. **Forzar el uso de Docker**:
+
    - Ve a la configuración del servicio en Railway
    - En **"Settings"** → **"Build & Deploy"**
    - Cambia el **"Builder"** a **"Dockerfile"**
    - Asegúrate de que el **"Dockerfile Path"** sea `./Dockerfile`
 
 2. **Si Railway detecta automáticamente el proyecto**:
+
    - Railway puede intentar usar Nixpacks primero
    - Debes cambiar manualmente a Dockerfile en la configuración
 
 3. **Crear servicios**:
+
    - **Servicio Web**: Se crea automáticamente cuando conectas el repo
    - **Servicio MySQL**: Click en **"New"** → **"Database"** → **"MySQL"**
 
@@ -364,6 +367,7 @@ En cada servicio, puedes agregar variables de entorno personalizadas si lo neces
 **IMPORTANTE**: Los scripts SQL NO se ejecutan automáticamente en Railway. Debes ejecutarlos manualmente:
 
 **Opción 1: Desde Railway Shell**
+
 1. Ve al servicio MySQL en Railway
 2. Click en **"Connect"** → **"MySQL"**
 3. Usa las credenciales para conectarte
@@ -375,6 +379,7 @@ En cada servicio, puedes agregar variables de entorno personalizadas si lo neces
    ```
 
 **Opción 2: Desde tu máquina local**
+
 ```bash
 # Obtén las credenciales de Railway MySQL
 # Luego ejecuta:
@@ -384,6 +389,7 @@ mysql -h <MYSQLHOST> -u <MYSQLUSER> -p<MYSQLPASSWORD> <MYSQLDATABASE> < database
 ```
 
 **Opción 3: Usar un cliente MySQL**
+
 - Usa MySQL Workbench, DBeaver o TablePlus
 - Conéctate usando las credenciales de Railway
 - Ejecuta los scripts SQL manualmente
@@ -406,24 +412,36 @@ mysql -h <MYSQLHOST> -u <MYSQLUSER> -p<MYSQLPASSWORD> <MYSQLDATABASE> < database
 ### Solución de Problemas en Railway
 
 **Error: "Railpack could not determine how to build the app"**
+
 - Ve a Settings → Build & Deploy
 - Cambia el Builder a "Dockerfile"
 - Asegúrate de que el Dockerfile Path sea `./Dockerfile`
 
 **Error: "Script start.sh not found"**
+
 - Railway está intentando usar Nixpacks
 - Fuerza el uso de Dockerfile en la configuración
 - Los archivos `railway.json` y `railway.toml` deberían ayudar
 
 **Error: Detecta carpeta `comprar_zapatos`**
+
 - Elimina esa carpeta del repositorio si existe
 - Haz commit y push de los cambios
 - Vuelve a desplegar
 
 **Error: No se puede conectar a la base de datos**
+
 - Verifica que las variables de entorno estén correctas
 - Asegúrate de usar las variables de Railway: `${{MySQL.MYSQLHOST}}`, etc.
 - Revisa los logs del servicio web
+
+**Error: Healthcheck failed / Service unavailable**
+
+- El healthcheck ahora usa `/healthcheck.php` que no requiere base de datos
+- Verifica que el archivo `healthcheck.php` esté en la raíz del proyecto
+- Aumenta el `healthcheckTimeout` en `railway.toml` si es necesario
+- Revisa los logs para ver si Apache está iniciando correctamente
+- Asegúrate de que las variables de entorno de la BD estén configuradas antes del despliegue
 
 Para más detalles, consulta [RAILWAY-SETUP.md](RAILWAY-SETUP.md)
 

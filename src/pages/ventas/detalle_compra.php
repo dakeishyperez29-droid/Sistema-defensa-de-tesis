@@ -75,7 +75,7 @@ include __DIR__ . '/../../includes/header.php';
                 <?php if ($venta['numero_control']): ?>
                 <div class="col-md-3"><strong>N° Control:</strong> <?= htmlspecialchars($venta['numero_control']) ?></div>
                 <?php endif; ?>
-                <div class="col-md-3"><strong>Fecha:</strong> <?= date('d/m/Y H:i', strtotime($venta['fecha'])) ?></div>
+                <div class="col-md-3"><strong>Fecha:</strong> <?= date('d/m/Y', strtotime($venta['fecha'])) ?></div>
                 <div class="col-md-3"><strong>Método de Pago:</strong> <?= htmlspecialchars($venta['metodo_pago_nombre']) ?></div>
             </div>
             <div class="row mb-3">

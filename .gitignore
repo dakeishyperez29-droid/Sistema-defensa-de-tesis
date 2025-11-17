@@ -24,10 +24,7 @@ temp/
 *.tmp
 
 # Database dumps (excepto los de inicialización)
-database/*.sql
-!database/01-schema.sql
-!database/02-data.sql
-!database/init.sql
+
 
 # Docker volumes
 db_data/

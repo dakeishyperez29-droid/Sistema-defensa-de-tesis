@@ -25,7 +25,7 @@ Asegúrate de tener estos archivos en el proyecto:
 - `Dockerfile`
 - `docker-compose.yml`
 - `database/init.sql`
-- `database/11-schema-final-ventas.sql`
+- `database/schema.sql`
 
 #### Paso 3: Levantar los Contenedores
 
@@ -82,7 +82,7 @@ Una vez que los contenedores estén corriendo:
 La base de datos se inicializa automáticamente. Los scripts se ejecutan en este orden:
 
 1. `database/init.sql` - Crea la base de datos `sistema_admin`
-2. `database/11-schema-final-ventas.sql` - Crea todas las tablas y datos iniciales
+2. `database/schema.sql` - Crea todas las tablas, triggers y datos iniciales
 
 Puedes verificar en phpMyAdmin que las tablas se hayan creado correctamente.
 
@@ -427,7 +427,7 @@ flowchart TD
 1. **Configurar la base de datos**
 
    - Crear una base de datos llamada `sistema_admin`
-   - Importar el script SQL desde `database/11-schema-final-ventas.sql`
+   - Importar el script SQL desde `database/schema.sql`
 
 2. **Configurar la conexión**
 
@@ -515,8 +515,7 @@ Después del despliegue, necesitas ejecutar los scripts SQL:
 
 ```bash
 # Conectarte a tu base de datos MySQL externa
-mysql -h <host> -u <usuario> -p <database> < database/init.sql
-mysql -h <host> -u <usuario> -p <database> < database/11-schema-final-ventas.sql
+mysql -h <host> -u <usuario> -p <database> < database/schema.sql
 ```
 
 **Opción 2: Desde Render Shell**
@@ -526,15 +525,14 @@ mysql -h <host> -u <usuario> -p <database> < database/11-schema-final-ventas.sql
 3. Ejecuta:
 
 ```bash
-mysql -h $DB_HOST -u $DB_USER -p$DB_PASS $DB_NAME < database/init.sql
-mysql -h $DB_HOST -u $DB_USER -p$DB_PASS $DB_NAME < database/11-schema-final-ventas.sql
+mysql -h $DB_HOST -u $DB_USER -p$DB_PASS $DB_NAME < database/schema.sql
 ```
 
 **Opción 3: Usar un cliente MySQL**
 
 - Usa MySQL Workbench, DBeaver o phpMyAdmin
 - Conéctate a tu base de datos externa
-- Ejecuta primero `database/init.sql` y luego `database/11-schema-final-ventas.sql`
+- Ejecuta `database/schema.sql`
 
 #### Paso 7: Verificar el Despliegue
 
@@ -607,10 +605,9 @@ En cada servicio, puedes agregar variables de entorno personalizadas si lo neces
 1. Ve al servicio MySQL en Railway
 2. Click en **"Connect"** → **"MySQL"**
 3. Usa las credenciales para conectarte
-4. Ejecuta los scripts SQL en orden:
+4. Ejecuta el script SQL:
    ```sql
-   -- Ejecuta el contenido de database/init.sql
-   -- Luego database/11-schema-final-ventas.sql
+   -- Ejecuta el contenido de database/schema.sql
    ```
 
 **Opción 2: Desde tu máquina local**
@@ -618,15 +615,14 @@ En cada servicio, puedes agregar variables de entorno personalizadas si lo neces
 ```bash
 # Obtén las credenciales de Railway MySQL
 # Luego ejecuta:
-mysql -h <MYSQLHOST> -u <MYSQLUSER> -p<MYSQLPASSWORD> <MYSQLDATABASE> < database/init.sql
-mysql -h <MYSQLHOST> -u <MYSQLUSER> -p<MYSQLPASSWORD> <MYSQLDATABASE> < database/11-schema-final-ventas.sql
+mysql -h <MYSQLHOST> -u <MYSQLUSER> -p<MYSQLPASSWORD> <MYSQLDATABASE> < database/schema.sql
 ```
 
 **Opción 3: Usar un cliente MySQL**
 
 - Usa MySQL Workbench, DBeaver o TablePlus
 - Conéctate usando las credenciales de Railway
-- Ejecuta primero `database/init.sql` y luego `database/11-schema-final-ventas.sql`
+- Ejecuta `database/schema.sql`
 
 #### Paso 6: Desplegar
 
@@ -688,8 +684,8 @@ Para más detalles, consulta [RAILWAY-SETUP.md](RAILWAY-SETUP.md)
 - ✅ `railway.json` - Configuración para Railway (fuerza uso de Dockerfile)
 - ✅ `railway.toml` - Configuración alternativa para Railway
 - ✅ `nixpacks.toml` - Configuración para forzar Docker en Nixpacks
-- ✅ `database/init.sql` - Crea la base de datos `sistema_admin`
-- ✅ `database/11-schema-final-ventas.sql` - Crea todas las tablas y datos iniciales
+- ✅ `database/init.sql` - Crea la base de datos `sistema_admin` (para Docker)
+- ✅ `database/schema.sql` - Script completo: crea base de datos, tablas, triggers y datos iniciales
 
 ### Solución de Problemas en Producción
 

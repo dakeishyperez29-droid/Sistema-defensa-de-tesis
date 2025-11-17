@@ -12,17 +12,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nombre = substr($_POST['nombre'], 0, 50);
     $descripcion = substr($_POST['descripcion'], 0, 50);
     $precio = preg_replace('/[^0-9.,]/', '', $_POST['precio']);
+    $stock_minimo = isset($_POST['stock_minimo']) ? (int)$_POST['stock_minimo'] : 0;
 
     try {
         $stmt = $pdo->prepare("
-            INSERT INTO productos (nombre, descripcion, precio, stock)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO productos (nombre, descripcion, precio, stock, stock_minimo)
+            VALUES (?, ?, ?, ?, ?)
         ");
         $stmt->execute([
             $nombre,
             $descripcion,
             $precio,
-            0
+            0,
+            $stock_minimo
         ]);
         $mensaje = 'Producto creado exitosamente!';
     } catch (PDOException $e) {
@@ -72,6 +74,10 @@ include __DIR__ . '/../../includes/header.php';
                     <div class="col-md-6 mb-3">
                         <label for="precio" class="form-label">Precio:</label>
                         <input type="text" id="precio" name="precio" class="form-control" required maxlength="8" pattern="^\d{1,5}(,\d{1,2})?$" inputmode="decimal">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="stock_minimo" class="form-label">Stock Mínimo:</label>
+                        <input type="number" id="stock_minimo" name="stock_minimo" class="form-control" min="0" value="0" required>
                     </div>
                 </div>
                 <div class="text-end">

@@ -6,7 +6,7 @@ include __DIR__ . '/../../includes/conexion.php';
 verificarAutenticacion();
 
 // Consulta con orden dinámico y filtros
-$allowedSort = ['id', 'nombre', 'precio', 'stock'];
+$allowedSort = ['id', 'nombre', 'precio', 'stock', 'stock_minimo'];
 $sort = isset($_GET['sort']) && in_array($_GET['sort'], $allowedSort) ? $_GET['sort'] : 'id';
 $order = isset($_GET['order']) && $_GET['order'] === 'asc' ? 'ASC' : 'DESC';
 
@@ -32,6 +32,11 @@ if (!empty($_GET['precio'])) {
 if (!empty($_GET['stock'])) {
     $filtros[] = "p.stock LIKE :stock";
     $params[':stock'] = '%' . $_GET['stock'] . '%';
+}
+
+if (!empty($_GET['stock_minimo'])) {
+    $filtros[] = "p.stock_minimo LIKE :stock_minimo";
+    $params[':stock_minimo'] = '%' . $_GET['stock_minimo'] . '%';
 }
 
 $whereClause = !empty($filtros) ? 'WHERE ' . implode(' AND ', $filtros) : '';
@@ -108,6 +113,7 @@ include __DIR__ . '/../../includes/header.php';
                                 <th><?= sortLink('Descripción', 'descripcion', $sort, $order) ?></th>
                                 <th><?= sortLink('Precio', 'precio', $sort, $order) ?></th>
                                 <th><?= sortLink('Stock', 'stock', $sort, $order) ?></th>
+                                <th><?= sortLink('Stock Mínimo', 'stock_minimo', $sort, $order) ?></th>
                                 <th class="text-center">Acciones</th>
                             </tr>
                             <!-- Filtros inteligentes -->
@@ -117,6 +123,7 @@ include __DIR__ . '/../../includes/header.php';
                                 <th></th>
                                 <th><input type="text" class="form-control form-control-sm" placeholder="Buscar Precio" name="precio" value="<?= htmlspecialchars($_GET['precio'] ?? '') ?>"></th>
                                 <th><input type="text" class="form-control form-control-sm" placeholder="Buscar Stock" name="stock" value="<?= htmlspecialchars($_GET['stock'] ?? '') ?>"></th>
+                                <th><input type="text" class="form-control form-control-sm" placeholder="Buscar Stock Mínimo" name="stock_minimo" value="<?= htmlspecialchars($_GET['stock_minimo'] ?? '') ?>"></th>
                                 <th class="text-center">
                                     <button type="submit" class="btn btn-sm btn-primary">Buscar</button>
                                     <a href="gestion_productos.php" class="btn btn-sm btn-outline-secondary ms-1">Limpiar</a>
@@ -131,6 +138,7 @@ include __DIR__ . '/../../includes/header.php';
                             <td><?= htmlspecialchars($producto['descripcion'] ?? '') ?></td>
                             <td>$<?= number_format($producto['precio'], 2, ',', '.') ?></td>
                             <td><?= $producto['stock'] ?></td>
+                            <td><?= $producto['stock_minimo'] ?? 0 ?></td>
                             <td class="text-center">
                                 <div class="btn-group acciones-btn-group" role="group">
                                     <button type="button" class="btn btn-sm btn-primary btn-editar" data-id="<?= $producto['id'] ?>" title="Editar">
@@ -212,6 +220,10 @@ include __DIR__ . '/../../includes/header.php';
                     <input type="number" class="form-control" name="stock" id="edit-stock" required min="0" max="999">
                     <small class="text-muted" id="stock-validation-message"></small>
                 </div>
+                <div class="mb-3">
+                    <label for="edit-stock-minimo" class="form-label">Stock Mínimo</label>
+                    <input type="number" class="form-control" name="stock_minimo" id="edit-stock-minimo" required min="0" max="999">
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -236,6 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('edit-descripcion').value = producto.descripcion || '';
             document.getElementById('edit-precio').value = producto.precio;
             document.getElementById('edit-stock').value = producto.stock;
+            document.getElementById('edit-stock-minimo').value = producto.stock_minimo || 0;
             
             // Mostrar stock actual
             const stockActualInfo = document.getElementById('stock-actual-info');
@@ -365,6 +378,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 tr.children[2].textContent = res.producto.descripcion || '';
                 tr.children[3].textContent = '$' + parseFloat(res.producto.precio).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
                 tr.children[4].textContent = res.producto.stock;
+                tr.children[5].textContent = res.producto.stock_minimo || 0;
                 var modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarProducto'));
                 modal.hide();
             } else {
@@ -388,11 +402,47 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(res => {
                 if (res.success) {
                     document.getElementById('producto-row-' + id).remove();
+                    // Mostrar mensaje de éxito
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-success alert-dismissible fade show';
+                    alertDiv.innerHTML = '<strong>Éxito:</strong> ' + (res.message || 'Producto eliminado exitosamente.') + 
+                        '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+                    document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.container').firstChild);
+                    setTimeout(() => alertDiv.remove(), 5000);
                 } else {
-                    alert('Error al eliminar: ' + res.error);
+                    // Mostrar error con HTML usando modal de Bootstrap
+                    const errorModal = document.getElementById('modalErrorEliminar');
+                    if (!errorModal) {
+                        // Crear modal si no existe
+                        const modalHTML = `
+                            <div class="modal fade" id="modalErrorEliminar" tabindex="-1">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title">
+                                                <i class="bi bi-exclamation-triangle me-2"></i>Error al Eliminar Producto
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body" id="modalErrorEliminarBody">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        document.body.insertAdjacentHTML('beforeend', modalHTML);
+                    }
+                    document.getElementById('modalErrorEliminarBody').innerHTML = res.error;
+                    const modal = new bootstrap.Modal(document.getElementById('modalErrorEliminar'));
+                    modal.show();
                 }
             })
-            .catch(() => alert('Error de conexión.'));
+            .catch(() => {
+                alert('Error de conexión. Por favor, intente nuevamente.');
+            });
         });
     });
 });

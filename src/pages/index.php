@@ -6,7 +6,7 @@ verificarAutenticacion();
 // Obtener estadísticas para el dashboard
 $totalVentas = $pdo->query("SELECT COUNT(*) as total FROM ventas")->fetch(PDO::FETCH_ASSOC)['total'];
 $totalProductos = $pdo->query("SELECT COUNT(DISTINCT nombre) as total FROM productos")->fetch(PDO::FETCH_ASSOC)['total'];
-$productosBajoStock = $pdo->query("SELECT COUNT(*) as total FROM productos WHERE stock <= 0")->fetch(PDO::FETCH_ASSOC)['total'];
+$productosBajoStock = $pdo->query("SELECT COUNT(*) as total FROM productos WHERE stock <= stock_minimo")->fetch(PDO::FETCH_ASSOC)['total'];
 $totalClientes = $pdo->query("SELECT COUNT(*) as total FROM clientes")->fetch(PDO::FETCH_ASSOC)['total'];
 
 // Obtener últimas ventas
@@ -30,9 +30,9 @@ $productosPopulares = $pdo->query("
 
 // Obtener productos con stock bajo
 $productosBajo = $pdo->query("
-    SELECT nombre, stock
+    SELECT nombre, stock, stock_minimo
     FROM productos 
-    WHERE stock <= 0
+    WHERE stock <= stock_minimo
     LIMIT 5
 ")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -198,10 +198,10 @@ include __DIR__ . '/../includes/header.php';
                             </thead>
                             <tbody>
                                 <?php foreach ($productosBajo as $producto): ?>
-                                <tr class="<?= $producto['stock'] <= 0 ? 'bg-warning-light' : '' ?>">
+                                <tr class="<?= $producto['stock'] <= $producto['stock_minimo'] ? 'bg-warning-light' : '' ?>">
                                     <td><?= htmlspecialchars($producto['nombre']) ?></td>
                                     <td class="text-right font-weight-bold"><?= $producto['stock'] ?></td>
-                                    <td class="text-right">-</td>
+                                    <td class="text-right"><?= $producto['stock_minimo'] ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>

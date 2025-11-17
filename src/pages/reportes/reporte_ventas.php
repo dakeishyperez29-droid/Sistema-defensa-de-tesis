@@ -18,24 +18,27 @@ $clientes = $pdo->query("SELECT id, nombre FROM clientes ORDER BY nombre ASC")->
 $params = [];
 $conditions = [];
 
-// Solo agregar estos filtros si el reporte lo permite
+// Solo agregar estos filtros si el reporte lo permite (no para stock_inventario)
 $puedeFiltrarPorProducto = in_array($reporteSeleccionado, [
     'resumen_ventas',
     'ventas_cliente',
     'stock_inventario'
 ]);
 
-if (!empty($fechaInicio)) {
-    $conditions[] = "v.fecha >= :fecha_inicio";
-    $params[':fecha_inicio'] = $fechaInicio . ' 00:00:00';
-}
-if (!empty($fechaFin)) {
-    $conditions[] = "v.fecha <= :fecha_fin";
-    $params[':fecha_fin'] = $fechaFin . ' 23:59:59';
-}
-if (!empty($clienteId)) {
-    $conditions[] = "v.cliente_id = :cliente_id";
-    $params[':cliente_id'] = $clienteId;
+// Los filtros de fecha y cliente no aplican para stock_inventario
+if ($reporteSeleccionado != 'stock_inventario') {
+    if (!empty($fechaInicio)) {
+        $conditions[] = "v.fecha >= :fecha_inicio";
+        $params[':fecha_inicio'] = $fechaInicio . ' 00:00:00';
+    }
+    if (!empty($fechaFin)) {
+        $conditions[] = "v.fecha <= :fecha_fin";
+        $params[':fecha_fin'] = $fechaFin . ' 23:59:59';
+    }
+    if (!empty($clienteId)) {
+        $conditions[] = "v.cliente_id = :cliente_id";
+        $params[':cliente_id'] = $clienteId;
+    }
 }
 
 // Convertir condiciones a cadena WHERE
@@ -80,11 +83,11 @@ switch ($reporteSeleccionado) {
     case 'stock_inventario':
         // Productos con stock bajo
         $stockParams = [];
-        $stockConditions = ["p.stock <= 0"];
+        $stockConditions = ["p.stock <= p.stock_minimo"];
         
         $stockWhere = 'WHERE ' . implode(' AND ', $stockConditions);
         
-        $query = "SELECT p.id, p.nombre, p.stock
+        $query = "SELECT p.id, p.nombre, p.stock, p.stock_minimo
                  FROM productos p
                  $stockWhere
                  ORDER BY p.stock ASC";
@@ -116,6 +119,7 @@ include __DIR__ . '/../../includes/header.php';
                     <option value="stock_inventario" <?= $reporteSeleccionado == 'stock_inventario' ? 'selected' : '' ?>>Stock de Inventario</option>
                 </select>
             </div>
+            <?php if ($reporteSeleccionado != 'stock_inventario'): ?>
             <div class="col-md-2">
                 <label for="fecha_inicio" class="form-label fw-bold">Fecha Inicio</label>
                     <input type="date" class="form-control border-primary" id="fecha_inicio" name="fecha_inicio"
@@ -126,6 +130,8 @@ include __DIR__ . '/../../includes/header.php';
                 <input type="date" class="form-control border-primary" id="fecha_fin" name="fecha_fin"
                  value="<?= htmlspecialchars($fechaFin) ?>" max="<?= date('Y-m-d') ?>">
             </div>
+            <?php endif; ?>
+            <?php if ($reporteSeleccionado != 'stock_inventario'): ?>
             <div class="col-md-2">
                 <label for="cliente_id" class="form-label fw-bold">Cliente</label>
                 <select class="form-select border-primary" id="cliente_id" name="cliente_id">
@@ -137,8 +143,9 @@ include __DIR__ . '/../../includes/header.php';
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="col-md-12 text-end mt-2">
-                <center></center_><button type="submit" class="btn btn-primary btn-action">
+            <?php endif; ?>
+            <div class="col-md-<?= $reporteSeleccionado == 'stock_inventario' ? '12' : '12' ?> text-end mt-2">
+                <center><button type="submit" class="btn btn-primary btn-action">
                     <i class="fas fa-play me-2"></i> Generar
                 </button></center>
             </div>
@@ -262,14 +269,16 @@ include __DIR__ . '/../../includes/header.php';
                                             <thead>
                                                 <tr class="bg-light">
                                                     <th>Producto</th>
-                                                    <th class="text-right">Stock</th>
+                                                    <th class="text-right">Stock Actual</th>
+                                                    <th class="text-right">Stock Mínimo</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <?php foreach ($reportData['productosStockBajo'] as $producto): ?>
-                                                    <tr class="<?= $producto['stock'] <= 0 ? 'bg-danger-light' : 'bg-warning-light' ?>">
+                                                    <tr class="<?= $producto['stock'] <= $producto['stock_minimo'] ? 'bg-danger-light' : 'bg-warning-light' ?>">
                                                         <td><?= htmlspecialchars($producto['nombre']) ?></td>
                                                         <td class="text-right font-weight-bold"><?= $producto['stock'] ?></td>
+                                                        <td class="text-right"><?= $producto['stock_minimo'] ?></td>
                                                     </tr>
                                                 <?php endforeach; ?>
                                             </tbody>

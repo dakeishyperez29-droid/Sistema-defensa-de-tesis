@@ -4,11 +4,11 @@ include __DIR__ . '/../../includes/auth.php';
 include __DIR__ . '/../../includes/conexion.php';
 verificarAutenticacion();
 
-// Consulta productos con bajo stock (stock <= 0)
+// Consulta productos con bajo stock (stock <= stock_minimo)
 $productosBajoStock = $pdo->query("
-    SELECT p.id, p.nombre, p.stock
+    SELECT p.id, p.nombre, p.stock, p.stock_minimo
     FROM productos p
-    WHERE p.stock <= 0
+    WHERE p.stock <= p.stock_minimo
     ORDER BY p.stock ASC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -30,11 +30,12 @@ include __DIR__ . '/../../includes/header.php';
             <?php if (count($productosBajoStock) > 0): ?>
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
+                        <thead class="table-light">
                         <tr>
                             <th>ID</th>
                             <th>Nombre</th>
                             <th>Stock Actual</th>
+                            <th>Stock Mínimo</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,6 +44,7 @@ include __DIR__ . '/../../includes/header.php';
                             <td><?= $producto['id'] ?></td>
                             <td><?= htmlspecialchars($producto['nombre']) ?></td>
                             <td><?= $producto['stock'] ?></td>
+                            <td><?= $producto['stock_minimo'] ?></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>

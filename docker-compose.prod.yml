@@ -3,7 +3,7 @@ version: '3.8'
 services:
   web:
     build: .
-    container_name: sistema_compras_web
+    container_name: sistema_admin
     ports:
       - "80:80"
     depends_on:
@@ -20,7 +20,7 @@ services:
 
   db:
     image: mysql:8.0
-    container_name: sistema_compras_db
+    container_name: sistema_admin_db
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_PASS:-rootpassword}
       - MYSQL_DATABASE=${DB_NAME:-sistema_admin}

@@ -22,7 +22,8 @@ try {
             p.nombre,
             p.descripcion,
             p.precio,
-            p.stock
+            p.stock,
+            p.stock_minimo
         FROM productos p
         WHERE p.id = ?
     ");
